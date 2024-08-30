@@ -20,10 +20,8 @@ class User extends Authenticatable
         'avatar',
     ];
 
-    // /**
-    //  * @var array<int, string>
-    //  */
-    // protected $hidden = [
-    //     'password',
-    // ];
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }
