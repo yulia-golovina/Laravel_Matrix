@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\PostResource;
 
 class UserResource extends JsonResource
 {
@@ -19,6 +20,7 @@ class UserResource extends JsonResource
             'login' => $this->login,
             'email' => $this->email,
             'avatar' => $this->avatar,
+            'posts' => PostResource::collection($this->whenLoaded('posts')),
         ];
     }
 }
