@@ -5,6 +5,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
+use App\Jobs\SendEmailJob;
 
 class UserController
 {
@@ -17,6 +18,7 @@ class UserController
         try {
             return Cache::remember('user_' . $id, 900, function() use ($id) {
                 $user = User::with('posts.user')->findOrFail($id);
+                SendEmailJob::dispatchSync($user);
                 return (new UserResource($user))->response()->setStatusCode(200, 'OK');
             });
 
