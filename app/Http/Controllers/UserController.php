@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
-use Illuminate\Http\Response;
-
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 
 class UserController
 {
@@ -16,8 +15,12 @@ class UserController
     }
     public function show($id) {
         try {
-            $userData = User::with('posts.user')->findOrFail($id);
-            return (new UserResource($userData))->response()->setStatusCode(200, 'OK');
+            return Cache::remember('user_' . $id, 900, function() use ($id) {
+                $user = User::with('posts.user')->findOrFail($id);
+                return (new UserResource($user))->response()->setStatusCode(200, 'OK');
+            });
+
+            // return Cache::get("user_$id");
         }
         catch(ModelNotFoundException $e)
         {
